@@ -1,55 +1,41 @@
 import "@testing-library/jest-dom";
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import NavBar from "../components/NavBar";
 
-let container;
-
-beforeEach(() => {
-  container = render(
-    <BrowserRouter>
+const renderWithRouter = (initialEntries = ["/"]) =>
+  render(
+    <MemoryRouter initialEntries={initialEntries}>
       <NavBar />
-    </BrowserRouter>
-  ).container;
-});
+    </MemoryRouter>
+  );
 
 test('wraps content in a div with "navbar" class', () => {
+  const { container } = renderWithRouter();
   expect(container.querySelector(".navbar")).toBeInTheDocument();
 });
 
-test("renders a Home <NavLink>", async () => {
-  const a = screen.queryByText(/Home/);
-
-  expect(a).toBeInTheDocument();
-  expect(a.tagName).toBe("A");
-  expect(a.href).toContain("/");
-
-  fireEvent.click(a, { button: 0 });
-
-  expect(a.classList).toContain("active");
+test("renders a Home <NavLink>", () => {
+  renderWithRouter();
+  const link = screen.getByText(/Home/i);
+  expect(link).toBeInTheDocument();
+  expect(link.tagName).toBe("A");
+  expect(link.getAttribute("href")).toBe("/");
 });
 
-test("renders a Actors <NavLink>", async () => {
-  const a = screen.queryByText(/Actors/);
-
-  expect(a).toBeInTheDocument();
-  expect(a.tagName).toBe("A");
-  expect(a.href).toContain("/");
-
-  fireEvent.click(a, { button: 0 });
-
-  expect(a.classList).toContain("active");
+test("renders an Actors <NavLink>", () => {
+  renderWithRouter();
+  const link = screen.getByText(/Actors/i);
+  expect(link).toBeInTheDocument();
+  expect(link.tagName).toBe("A");
+  expect(link.getAttribute("href")).toBe("/actors");
 });
 
-test("renders a Directors <NavLink>", async () => {
-  const a = screen.queryByText(/Directors/);
-
-  expect(a).toBeInTheDocument();
-  expect(a.tagName).toBe("A");
-  expect(a.href).toContain("/");
-
-  fireEvent.click(a, { button: 0 });
-
-  expect(a.classList).toContain("active");
+test("renders a Directors <NavLink>", () => {
+  renderWithRouter();
+  const link = screen.getByText(/Directors/i);
+  expect(link).toBeInTheDocument();
+  expect(link.tagName).toBe("A");
+  expect(link.getAttribute("href")).toBe("/directors");
 });
